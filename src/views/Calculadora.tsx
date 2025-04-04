@@ -1,0 +1,96 @@
+import { useState } from 'react';
+
+type Props = {
+  precioPorGramo: number;
+  precioPorHora: number;
+  margen: number;
+};
+
+type Cama = {
+  gramos: string;
+  horas: string;
+};
+
+export default function Calculadora({ precioPorGramo, precioPorHora, margen }: Props) {
+  const [camas, setCamas] = useState<Cama[]>([{ gramos: '', horas: '' }]);
+
+  const handleChange = (index: number, field: keyof Cama, value: string) => {
+    const nuevasCamas = [...camas];
+    nuevasCamas[index][field] = value;
+    setCamas(nuevasCamas);
+  };
+
+  const agregarCama = () => {
+    setCamas([...camas, { gramos: '', horas: '' }]);
+  };
+
+  const eliminarCama = (index: number) => {
+    const nuevas = camas.filter((_, i) => i !== index);
+    setCamas(nuevas);
+  };
+
+  const calcularSubtotal = (cama: Cama) => {
+    const gramos = parseFloat(cama.gramos || '0');
+    const horas = parseFloat(cama.horas || '0');
+    const costo = (gramos * precioPorGramo + horas * precioPorHora) * margen;
+    return Math.round(costo);
+  };
+
+  const total = camas.reduce((sum, cama) => sum + calcularSubtotal(cama), 0);
+
+  return (
+    <div className="p-4 space-y-4">
+      <h2 className="text-lg font-semibold">Cotizador por camas</h2>
+
+      {camas.map((cama, index) => (
+        <div key={index} className="border rounded p-3 space-y-2 bg-white shadow-sm">
+          <div className="flex gap-2">
+            <input
+              type="number"
+              placeholder="Gramos"
+              value={cama.gramos}
+              onChange={(e) => handleChange(index, 'gramos', e.target.value)}
+              className="w-full border px-2 py-1 rounded"
+            />
+            <input
+              type="number"
+              placeholder="Horas"
+              value={cama.horas}
+              onChange={(e) => handleChange(index, 'horas', e.target.value)}
+              className="w-full border px-2 py-1 rounded"
+            />
+            <button
+              onClick={() => eliminarCama(index)}
+              className="bg-red-500 text-white px-2 rounded"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="text-right text-sm text-gray-500">
+            Subtotal: ${calcularSubtotal(cama)} MXN
+          </div>
+        </div>
+      ))}
+
+      <button
+        onClick={agregarCama}
+        className="bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        + Agregar cama
+      </button>
+
+      <div className="text-right mt-4 text-xl font-semibold">
+        Total: ${total} MXN
+      </div>
+      <button
+    onClick={() => {
+      navigator.clipboard.writeText(`${total}`);
+      alert("Total copiado al portapapeles");
+    }}
+    className="text-sm text-blue-600 underline"
+  >
+    Copiar total
+  </button>
+    </div>
+  );
+}

@@ -1,0 +1,21 @@
+# dependencias
+node_modules/
+
+# salida de producción
+dist/
+
+# archivos de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# archivos del sistema
+.DS_Store
+Thumbs.db
+
+# entorno local
+.env
+.env.local
+
+# vite cache
+.vite/
