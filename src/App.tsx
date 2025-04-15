@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Printer, Settings } from "lucide-react";
 import Calculadora from "./views/Calculadora";
 import Configuracion from "./views/Configuracion";
@@ -6,12 +6,40 @@ import Configuracion from "./views/Configuracion";
 export default function App() {
   const [vista, setVista] = useState<'calculadora' | 'configuracion'>('calculadora');
 
-  const [precioPorKilo, setPrecioPorKilo] = useState(250); // MXN por kilo
-  const [precioPorHora, setPrecioPorHora] = useState(20); // incluye desgaste
-  const [margenPorcentaje, setMargenPorcentaje] = useState(50); // % de ganancia
+  let preconfiguracion = localStorage.getItem('preconfiguracion');
+  let config = {
+    precioKilo: 250,
+    precioHora: 20,
+    margenPorcentaje: 50,
+  };
+
+  if (preconfiguracion) {
+    try {
+      const configStorage = JSON.parse(preconfiguracion);
+      config = { ...config, ...configStorage }; // para evitar que falte alguna propiedad
+    } catch (e) {
+      console.error("Error al parsear localStorage", e);
+    }
+  } else {
+    localStorage.setItem('preconfiguracion', JSON.stringify(config));
+  }
+
+  const [precioPorKilo, setPrecioPorKilo] = useState(config.precioKilo);
+  const [precioPorHora, setPrecioPorHora] = useState(config.precioHora);
+  const [margenPorcentaje, setMargenPorcentaje] = useState(config.margenPorcentaje);
 
   const precioPorGramo = precioPorKilo / 1000;
   const margen = 1 + margenPorcentaje / 100;
+
+  // 🚨 Este useEffect guarda en localStorage cada vez que cambie algo
+  useEffect(() => {
+    const data = {
+      precioKilo: precioPorKilo,
+      precioHora: precioPorHora,
+      margenPorcentaje: margenPorcentaje,
+    };
+    localStorage.setItem('preconfiguracion', JSON.stringify(data));
+  }, [precioPorKilo, precioPorHora, margenPorcentaje]);
 
   return (
     <div className="flex flex-col h-screen">
