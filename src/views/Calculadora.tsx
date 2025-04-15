@@ -9,10 +9,11 @@ type Props = {
 type Cama = {
   gramos: string;
   horas: string;
+  minutos: string;
 };
 
 export default function Calculadora({ precioPorGramo, precioPorHora, margen }: Props) {
-  const [camas, setCamas] = useState<Cama[]>([{ gramos: '', horas: '' }]);
+  const [camas, setCamas] = useState<Cama[]>([{ gramos: '', horas: '', minutos:'' }]);
 
   const handleChange = (index: number, field: keyof Cama, value: string) => {
     const nuevasCamas = [...camas];
@@ -21,7 +22,7 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
   };
 
   const agregarCama = () => {
-    setCamas([...camas, { gramos: '', horas: '' }]);
+    setCamas([...camas, { gramos: '', horas: '', minutos:'' }]);
   };
 
   const eliminarCama = (index: number) => {
@@ -32,7 +33,14 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
   const calcularSubtotal = (cama: Cama) => {
     const gramos = parseFloat(cama.gramos || '0');
     const horas = parseFloat(cama.horas || '0');
-    const costo = (gramos * precioPorGramo + horas * precioPorHora) * margen;
+    const minutos = parseFloat(cama.minutos || '0');
+
+    // Convertimos los minutos a horas y sumamos con las horas
+    const totalHoras = horas + (minutos / 60);
+    console.log(totalHoras);
+
+    const costo = ((gramos * precioPorGramo) + (totalHoras * precioPorHora)) * margen;
+    console.log(gramos);
     return Math.round(costo);
   };
 
@@ -59,6 +67,15 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
               onChange={(e) => handleChange(index, 'horas', e.target.value)}
               className="w-full border px-2 py-1 rounded"
             />
+
+            <input
+              type="number"
+              placeholder="Minutos"
+              value={cama.minutos}
+              onChange={(e) => handleChange(index, 'minutos', e.target.value)}
+              className="w-full border px-2 py-1 rounded"
+            />
+            
             <button
               onClick={() => eliminarCama(index)}
               className="bg-red-500 text-white px-2 rounded"
