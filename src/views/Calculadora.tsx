@@ -14,6 +14,7 @@ type Cama = {
 
 export default function Calculadora({ precioPorGramo, precioPorHora, margen }: Props) {
   const [camas, setCamas] = useState<Cama[]>([{ gramos: '', horas: '', minutos:'' }]);
+  const [piezas, setPiezas] = useState('1');
 
   const handleChange = (index: number, field: keyof Cama, value: string) => {
     const nuevasCamas = [...camas];
@@ -99,15 +100,30 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
       <div className="text-right mt-4 text-xl font-semibold">
         Total: ${total} MXN
       </div>
+
+      <div className="flex justify-end items-center gap-2">
+        <label className="text-sm">Piezas:</label>
+        <input
+          type="number"
+          min={1}
+          value={piezas}
+          onChange={(e) => setPiezas(e.target.value)}
+          className="w-20 border px-2 py-1 rounded text-right"
+        />
+      </div>
+      <div className="text-right font-semibold">
+        Precio por pieza: ${Math.round(total / (parseInt(piezas) || 1))} MXN
+      </div>
+
       <button
-    onClick={() => {
-      navigator.clipboard.writeText(`${total}`);
-      alert("Total copiado al portapapeles");
-    }}
-    className="text-sm text-blue-600 underline"
-  >
-    Copiar total
-  </button>
+        onClick={() => {
+          navigator.clipboard.writeText(`${total}`);
+          alert("Total copiado al portapapeles");
+        }}
+        className="text-sm text-blue-600 underline"
+      >
+        Copiar total
+      </button>
     </div>
   );
 }
