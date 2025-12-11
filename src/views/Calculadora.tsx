@@ -31,6 +31,19 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
     setCamas(nuevas);
   };
 
+  const calcularInversion = (cama: Cama) => {
+    const gramos = parseFloat(cama.gramos || '0');
+    const horas = parseFloat(cama.horas || '0');
+    const minutos = parseFloat(cama.minutos || '0');
+
+    // Convertimos los minutos a horas y sumamos con las horas
+    const totalHoras = horas + (minutos / 60);
+    console.log(totalHoras);
+    const costo = ((gramos * precioPorGramo) + (totalHoras * precioPorHora));
+    console.log(gramos);
+    return Math.round(costo);
+  };
+
   const calcularSubtotal = (cama: Cama) => {
     const gramos = parseFloat(cama.gramos || '0');
     const horas = parseFloat(cama.horas || '0');
@@ -39,12 +52,11 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
     // Convertimos los minutos a horas y sumamos con las horas
     const totalHoras = horas + (minutos / 60);
     console.log(totalHoras);
-
     const costo = ((gramos * precioPorGramo) + (totalHoras * precioPorHora)) * margen;
     console.log(gramos);
     return Math.round(costo);
   };
-
+  const inversion = camas.reduce((sum, cama) => sum + calcularInversion(cama), 0);
   const total = camas.reduce((sum, cama) => sum + calcularSubtotal(cama), 0);
 
   return (
@@ -96,10 +108,11 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
       >
         + Agregar cama
       </button>
+      
 
-      <div className="text-right mt-4 text-xl font-semibold">
+      {/* <div className="text-right mt-4 text-xl font-semibold">
         Total: ${total} MXN
-      </div>
+      </div> */}
 
       <div className="flex justify-end items-center gap-2">
         <label className="text-sm">Piezas:</label>
@@ -111,9 +124,35 @@ export default function Calculadora({ precioPorGramo, precioPorHora, margen }: P
           className="w-20 border px-2 py-1 rounded text-right"
         />
       </div>
-      <div className="text-right font-semibold">
-        Precio por pieza: ${Math.round(total / (parseInt(piezas) || 1))} MXN
+
+      <div className="text-right mt-4 text-xl font-semibold">
+        Inversion: ${inversion} MXN
       </div>
+        {parseInt(piezas) > 1 && (
+        <div className="text-right mt-4 text-xl font-semibold">
+          Inversion por pieza: ${Math.round(inversion / parseInt(piezas))} MXN
+        </div>
+      )}
+      {/* <div className="text-right mt-4 text-xl font-semibold" >
+        Inversion por pieza: ${Math.round(inversion / (parseInt(piezas) || 1))} MXN
+      </div> */}
+
+      <div className="text-right mt-4 text-xl font-semibold text-green-500 font-bold">
+        Costo total con margen de {Math.round((margen - 1) * 100)}%: ${total} MXN
+      </div>
+
+      {parseInt(piezas) > 1 && (
+              <div className="text-right mt-4 text-xl font-semibold">
+        Costo total por pieza con margen de {Math.round((margen - 1) * 100)}%: ${Math.round(total / (parseInt(piezas) || 1))} MXN
+      </div>
+      )
+      }
+
+
+
+      {/* <div className="text-right font-semibold">
+        Precio por pieza: ${Math.round(total / (parseInt(piezas) || 1))} MXN
+      </div> */}
 
       <button
         onClick={() => {
