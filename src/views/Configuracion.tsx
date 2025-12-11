@@ -77,7 +77,7 @@ export default function Configuracion({
     <div className="p-4 space-y-4">
       <h2 className="text-lg font-semibold">Configuración</h2>
 {/* Si hay usuario, mostrar tarjeta con foto y botón Cerrar sesión */}
-      {usuario && (
+      {/* {usuario && (
         <div className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50">
     <img
       src={usuario.pictureUrl}
@@ -98,7 +98,8 @@ export default function Configuracion({
             Cerrar sesión
           </button>
         </div>
-      )}
+      )
+      } */}
       <div>
         <label className="block">Precio por kilo (MXN):</label>
         <input
@@ -142,13 +143,13 @@ export default function Configuracion({
 
 
       {/* Si NO hay usuario, aparece el botón */}
-      {!usuario && 
+      {/* {!usuario && 
             <div className="flex flex-col items-center mt-2">
                 <label className="block">Para cargar / guardar tu configuración</label>
 <div id="googleLoginBtn" className="mt-6"></div>
       </div>
       
-      }
+      } */}
 
     </div>
   );
